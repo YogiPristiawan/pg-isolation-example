@@ -21,17 +21,17 @@ func init() {
 	clear = make(map[string]func())
 
 	clear["linux"] = func() {
-		cmd := exec.Command("clear") //Linux example
+		cmd := exec.Command("clear") //Linux
 		cmd.Stdout = os.Stdout
 		cmd.Run()
 	}
 	clear["windows"] = func() {
-		cmd := exec.Command("cmd", "/c", "cls") //Windows example
+		cmd := exec.Command("cmd", "/c", "cls") //Windows
 		cmd.Stdout = os.Stdout
 		cmd.Run()
 	}
 	clear["darwin"] = func() {
-		cmd := exec.Command("clear") //Mac example
+		cmd := exec.Command("clear") //Mac
 		cmd.Stdout = os.Stdout
 		cmd.Run()
 	}
@@ -98,7 +98,16 @@ MainLoop:
 					log.Fatal(err)
 				}
 			} else if readPhenomena == read_phenomena.READ_PHENOMENA_PHANTOM_READ {
-				// TODO: Implement this
+				Clear()
+
+				phantomRead := read_phenomena.PhantomRead{
+					DB:      conn,
+					Migrate: db.Migrate,
+				}
+				err := phantomRead.Run()
+				if err != nil {
+					log.Fatal(err)
+				}
 			} else if readPhenomena == read_phenomena.READ_PHENOMENA_SERIALIZATION_ANOMALY {
 				// TODO: Implement this
 			}
