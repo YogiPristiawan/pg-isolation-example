@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 	"os/exec"
+	"pg-isolation/isolation"
 	"pg-isolation/read_phenomena"
 	"runtime"
 	"strings"
@@ -50,6 +51,7 @@ func main() {
 
 	var topic Topic
 	var readPhenomena read_phenomena.ReadPhenomena
+	var isolationLevel isolation.Isolation
 
 	config := ParseConfig()
 	db := &DB{
@@ -62,7 +64,6 @@ func main() {
 
 MainLoop:
 	for {
-		log.Println("fefefef")
 		Clear()
 
 		// choose topic
@@ -109,7 +110,6 @@ MainLoop:
 					log.Fatal(err)
 				}
 			} else if readPhenomena == read_phenomena.READ_PHENOMENA_SERIALIZATION_ANOMALY {
-				// TODO: Implement this
 				Clear()
 
 				serializationAnomaly := read_phenomena.SerializationAnomaly{
@@ -123,7 +123,32 @@ MainLoop:
 			}
 
 		} else if topic == TOPIC_PG_ISOLATION_LEVEL {
-			// TODO: Implement this
+			for {
+				isolationLevel, err = chooseIsolationLevel()
+				if err == nil && isolationLevel != isolation.ISOLATION_UNSPECIFIED {
+					break
+				}
+
+				fmt.Println("\nChoose the right Isolation Level option!")
+			}
+
+			// read committed
+			if isolationLevel == isolation.ISOLATION_READ_COMMITTED {
+				Clear()
+
+				readCommitted := isolation.RadCommitted{
+					DB:      conn,
+					Migrate: db.Migrate,
+				}
+				err = readCommitted.Run()
+				if err != nil {
+					log.Fatal(err)
+				}
+			} else if isolationLevel == isolation.ISOLATION_REPEATABLE_READ {
+				// TODO: Implement this
+			} else if isolationLevel == isolation.ISOLATION_SERIALIZABLE {
+				// TODO: Implement this
+			}
 		}
 
 	RunAgainLoop:
@@ -191,6 +216,25 @@ func chooseReadPhenomena() (read_phenomena.ReadPhenomena, error) {
 	}
 
 	return readPhenomena, nil
+}
+
+func chooseIsolationLevel() (isolation.Isolation, error) {
+	var msg1 = "\nChoose one of the Isolation Level below:"
+	fmt.Println(msg1)
+	fmt.Println(strings.Repeat("-", len(msg1)))
+
+	fmt.Println("[1] Read Committed")
+	fmt.Println("[2] Repeatable Read")
+	fmt.Println("[3] Serializable")
+	fmt.Print("\n-> ")
+
+	var isolationLevel isolation.Isolation
+	_, err := fmt.Scan(&isolationLevel)
+	if err != nil || !isolationLevel.Valid() {
+		return isolation.ISOLATION_UNSPECIFIED, ErrInvalidInput
+	}
+
+	return isolationLevel, nil
 }
 
 func Clear() {
