@@ -110,6 +110,16 @@ MainLoop:
 				}
 			} else if readPhenomena == read_phenomena.READ_PHENOMENA_SERIALIZATION_ANOMALY {
 				// TODO: Implement this
+				Clear()
+
+				serializationAnomaly := read_phenomena.SerializationAnomaly{
+					DB:      conn,
+					Migrate: db.Migrate,
+				}
+				err := serializationAnomaly.Run()
+				if err != nil {
+					log.Fatal(err)
+				}
 			}
 
 		} else if topic == TOPIC_PG_ISOLATION_LEVEL {
