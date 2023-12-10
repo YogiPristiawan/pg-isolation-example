@@ -20,6 +20,7 @@ func (r ReadPhenomena) Valid() bool {
 }
 
 type Product struct {
+	ID       int64
 	Name     string
 	Quantity int64
 }
