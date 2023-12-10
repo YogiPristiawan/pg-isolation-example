@@ -145,7 +145,16 @@ MainLoop:
 					log.Fatal(err)
 				}
 			} else if isolationLevel == isolation.ISOLATION_REPEATABLE_READ {
-				// TODO: Implement this
+				Clear()
+
+				repeatableRead := isolation.RepeatableRead{
+					DB:      conn,
+					Migrate: db.Migrate,
+				}
+				err = repeatableRead.Run()
+				if err != nil {
+					log.Fatal(err)
+				}
 			} else if isolationLevel == isolation.ISOLATION_SERIALIZABLE {
 				// TODO: Implement this
 			}

@@ -154,8 +154,8 @@ func (r *RadCommitted) Run() (err error) {
 
 		return
 	}
-	fmt.Printf("(1)----------\nID: %d\nName: %s\nQuantity: %d\n-------------\n", product3.ID, product3.Name, product3.Quantity)
-	log.Print("-> now, the product with ID 1, read from the FIRST database transaction, has the updated value from the SECOND database transaction after it has been committed")
+	fmt.Printf("(1)----------\nID: %d\nName: %s\nQuantity: %d\n-------------\n\n", product3.ID, product3.Name, product3.Quantity)
+	log.Print("-> As you can see, now, the product with ID 1, read from the FIRST database transaction, has the updated value from the SECOND database transaction after it has been committed")
 
 	return nil
 }
